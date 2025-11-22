@@ -1,0 +1,10 @@
+{
+    "theme": {
+      "extend": {
+        "colors": {
+          "teal": "#00A3AD",
+          "red": "#E60000"
+        }
+      }
+    }
+  }

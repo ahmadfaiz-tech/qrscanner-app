@@ -1,0 +1,49 @@
+{
+  "buildFiles": [
+    "C:\\Projects\\QRScannerApp\\node_modules\\react-native-permissions\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
+    "C:\\Projects\\QRScannerApp\\node_modules\\react-native-vector-icons\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
+    "C:\\Projects\\QRScannerApp\\node_modules\\react-native-worklets-core\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
+    "C:\\Projects\\QRScannerApp\\node_modules\\react-native\\ReactAndroid\\cmake-utils\\default-app-setup\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\User\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Projects\\QRScannerApp\\android\\app\\.cxx\\Debug\\02q1l672\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\User\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Projects\\QRScannerApp\\android\\app\\.cxx\\Debug\\02q1l672\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d": {
+      "artifactName": "react_codegen_RNVectorIconsSpec",
+      "abi": "x86",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNPermissionsSpec::@7ad697819b753921c957": {
+      "artifactName": "react_codegen_RNPermissionsSpec",
+      "abi": "x86",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNWorkletsSpec::@c787b30dd2b0f948dced": {
+      "artifactName": "react_codegen_RNWorkletsSpec",
+      "abi": "x86",
+      "runtimeFiles": []
+    },
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "artifactName": "appmodules",
+      "abi": "x86",
+      "output": "C:\\Projects\\QRScannerApp\\android\\app\\build\\intermediates\\cxx\\Debug\\02q1l672\\obj\\x86\\libappmodules.so",
+      "runtimeFiles": [
+        "C:\\Users\\User\\.gradle\\caches\\8.13\\transforms\\72cde7dc85b5006383f56c98fcfedfa5\\transformed\\fbjni-0.7.0\\prefab\\modules\\fbjni\\libs\\android.x86\\libfbjni.so",
+        "C:\\Users\\User\\.gradle\\caches\\8.13\\transforms\\8cb416b8178cb0e7f140959230f7f0bf\\transformed\\react-android-0.79.2-debug\\prefab\\modules\\jsi\\libs\\android.x86\\libjsi.so",
+        "C:\\Users\\User\\.gradle\\caches\\8.13\\transforms\\8cb416b8178cb0e7f140959230f7f0bf\\transformed\\react-android-0.79.2-debug\\prefab\\modules\\reactnative\\libs\\android.x86\\libreactnative.so"
+      ]
+    }
+  }
+}

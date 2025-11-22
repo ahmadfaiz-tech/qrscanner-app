@@ -1,0 +1,1 @@
+D:\Projects\QrScannerApp\android\app\build\intermediates\cxx\Debug\6gy5i2z2\obj\arm64-v8a

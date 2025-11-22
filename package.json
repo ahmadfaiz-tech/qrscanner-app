@@ -10,13 +10,30 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/image-editor": "^4.3.0",
+    "jpeg-js": "^0.4.4",
+    "jsqr": "^1.4.0",
     "react": "19.0.0",
-    "react-native": "0.79.2"
+    "react-native": "0.79.2",
+    "react-native-canvas": "^0.1.40",
+    "react-native-fs": "^2.20.0",
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-image-picker": "^8.2.1",
+    "react-native-linear-gradient": "^2.8.3",
+    "react-native-permissions": "^5.4.1",
+    "react-native-reanimated": "^3.18.0",
+    "react-native-safe-area-context": "^5.4.1",
+    "react-native-screens": "^4.11.1",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-vision-camera": "^4.6.4",
+    "react-native-worklets-core": "^1.5.0",
+    "tailwind-rn": "^4.2.0",
+    "vision-camera-dynamsoft-barcode-reader": "^2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
-    "@babel/runtime": "^7.25.0",
+    "@babel/runtime": "^7.27.4",
     "@react-native-community/cli": "18.0.0",
     "@react-native-community/cli-platform-android": "18.0.0",
     "@react-native-community/cli-platform-ios": "18.0.0",

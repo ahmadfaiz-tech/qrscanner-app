@@ -1,0 +1,72 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🤖 Build Android",
+      "type": "shell",
+      "command": "npx",
+      "args": [
+        "react-native",
+        "run-android"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "detail": "Build and run React Native app on Android device/emulator"
+    },
+    {
+      "label": "💾 Save",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "save.js"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "detail": "Backup project to GitHub with custom commit message"
+    },
+    {
+      "label": "🔄 Restore",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "restore.js"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "detail": "Restore project from GitHub backup branches"
+    }
+  ]
+}

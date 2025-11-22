@@ -1,0 +1,169 @@
+================================================================================
+DUITNOW QR SCANNER MOBILE APP
+React Native Learning Project - Android QR Code Scanner Prototype
+================================================================================
+
+PROJECT OVERVIEW
+
+A React Native mobile application that scans CIMB DuitNow QR codes and simulates a payment flow. This is a frontend prototype/learning project built on Windows that demonstrates QR scanning, data extraction, and mobile UI design skills.
+
+The app allows users to scan QR codes using their camera, automatically extracts the recipient's name from the QR data, lets them enter a payment amount, and displays a simulated transaction confirmation. No actual payments are processed - this is purely a UI/UX demonstration.
+
+
+WHAT THIS APP DOES
+
+1. Scan CIMB DuitNow QR codes using device camera
+2. Extract recipient name from QR code data using regex
+3. Enter payment amount with automatic MYR currency formatting
+4. View transaction confirmation screen
+5. Display success receipt with transaction details
+6. Save transaction log to local device storage
+
+Built for Android only (no iOS version as I developed this on Windows without Xcode).
+
+
+KEY FEATURES
+
+QR CODE SCANNING
+- Live camera scanning using react-native-vision-camera
+- Can also scan QR codes from gallery images
+- Custom camera overlay with scanning frame
+- Extracts recipient name automatically from QR data
+
+PAYMENT FLOW SIMULATION
+- Amount input with real-time MYR formatting (e.g., 100 becomes 1.00)
+- Confirmation screen showing payment details
+- Success screen with transaction receipt
+- Generated reference numbers (9-digit OCTO format)
+- Timestamp for each transaction
+
+UI/UX
+- 5-screen flow: Homepage → Scanner → Amount → Confirm → Success
+- Clean interface inspired by CIMB Bank app
+- Gradient backgrounds and professional styling
+- Malay language interface ("Imbas QR", "DuitNow QR")
+
+LOCAL STORAGE
+- Saves transactions to markdown file on device
+- Format: "Transaksi: [Name], MYR [Amount], [Timestamp]"
+
+
+TECHNICAL STACK
+
+Framework: React Native 0.79.2 + TypeScript 5.0
+Platform: Android only
+
+Main Libraries:
+- react-native-vision-camera - Camera access
+- vision-camera-dynamsoft-barcode-reader - QR detection
+- react-native-image-picker - Gallery selection
+- jsqr - QR decoding from images
+- react-native-fs - Local file storage
+- react-native-linear-gradient - UI gradients
+- react-native-vector-icons - Icons
+
+Code: ~550 lines of TypeScript in App.tsx
+
+
+WHAT I LEARNED
+
+- React Native development with TypeScript
+- Integrating camera APIs and QR scanning libraries
+- Regex pattern matching for data extraction from QR codes
+- Real-time input formatting and validation
+- Mobile UI/UX design following banking app patterns
+- Local file system operations in React Native
+- Android permissions handling
+
+
+IMPORTANT LIMITATIONS
+
+This is NOT:
+✗ A production payment app
+✗ Connected to any real banking system or API
+✗ Processing actual money transfers
+✗ Secure for real financial transactions
+✗ Built for iOS (Windows dev environment only)
+
+This IS:
+✓ A learning/portfolio project
+✓ A frontend UI prototype
+✓ A demonstration of React Native skills
+✓ Showing QR scanning implementation
+✓ Android-only application
+
+
+WHY THIS PROJECT MATTERS
+
+For Clients:
+Shows I can build Android mobile apps with React Native, implement QR scanning features, and create professional-looking interfaces. The skills demonstrated here (library integration, UI design, data processing) are transferable to real client projects.
+
+For Recruiters:
+Demonstrates practical mobile development skills:
+- React Native + TypeScript
+- Third-party library integration (camera, QR scanning, storage)
+- Mobile UI/UX implementation
+- Problem-solving (regex extraction, formatting)
+- Android development basics
+
+Honest about scope: This is a solo learning project suitable for a junior/mid-level developer portfolio. It shows ability to learn new technologies and build complete features, even if not production-scale.
+
+
+TECHNICAL HIGHLIGHTS
+
+DATA EXTRACTION
+- Used regex pattern `59(\d{2})([\w\s\(\)\.\,\-]+)60` to extract names from CIMB QR format
+- Handles various name formats with spaces and special characters
+
+DUAL SCANNING
+- Primary: Real-time camera scanning
+- Backup: Gallery image scanning with JPEG decoding
+
+FORMATTING LOGIC
+- Input formatter: Converts typed numbers to decimal format automatically
+- Display formatter: Shows clean currency values (removes extra zeros)
+- Validation: Prevents invalid or zero amounts
+
+
+PROJECT METRICS
+
+- 550+ lines of TypeScript code
+- 5 functional screens
+- 10+ libraries integrated
+- 1 developer (solo project)
+- Android only
+- No backend/API
+
+
+WHAT'S NEXT
+
+To make this production-ready, it would need:
+- Backend API integration
+- Real payment gateway connection
+- User authentication
+- Security features (encryption, secure storage)
+- iOS version (requires macOS development)
+- Proper testing and error handling
+- Team code review
+
+
+CONTACT
+
+Available for:
+- Android mobile app development (React Native)
+- Mobile UI/UX implementation
+- QR/barcode scanning features
+- Prototype/MVP development
+
+Currently learning:
+- iOS development (need macOS setup)
+- Backend integration
+- Production deployment
+
+Open to junior/mid-level positions or freelance projects where I can apply and grow these skills.
+
+
+================================================================================
+This is an honest representation of a learning project that demonstrates
+real mobile development skills without overselling what it actually is.
+================================================================================

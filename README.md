@@ -95,3 +95,92 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+stop dahulu metro sebelum run command ini:
+
+cd android
+./gradlew clean
+cd ..
+npx react-native run-android
+
+jika masih gagal cuba run 
+
+npx react-native run-android
+
+selepas menjalankan step 1
+
+
+jika gagal pada build.gradle: guna langkah ini:
+
+Jika Masih Gagal:
+Pastikan tiada import modul yang sudah dipadam dalam kod anda (contoh: import QRLocalImage from 'react-native-qrcode-local-image'; mesti dipadam).
+Pastikan tiada kod yang guna modul yang sudah dipadam.
+Jika error berkaitan CMake/Native masih keluar, cuba padam folder berikut secara manual:
+android/app/build
+android/app/.cxx
+android/build
+node_modules/.cache
+
+ini prompt auto:
+
+Remove-Item -Recurse -Force node_modules
+Remove-Item -Recurse -Force android\app\build
+Remove-Item -Recurse -Force android\build
+Remove-Item -Recurse -Force android\app\.cxx
+Remove-Item -Recurse -Force android\app\.externalNativeBuild
+Remove-Item -Recurse -Force android\.gradle
+Remove-Item -Recurse -Force .gradle
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Android\Sdk\cmake\3.22.1"
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Android\Sdk\ndk\27.1.12297006"
+npm install
+cd android
+./gradlew clean
+./gradlew assembleRelease
+
+
+
+Kemudian ulang langkah 2-6 di atas.
+
+jika asyuik masalah cmake dan ninja guna step ini:
+Edit android/gradle.properties:
+reactNativeArchitectures=armeabi-v7a,arm64-v8a
+
+
+1. Homepage
+Butang "Imbas QR" akan berada di tengah-tengah skrin, lebih besar, berwarna merah dengan tulisan putih.
+Latar belakang putih.
+2. Camera
+Semua teks (Place QR in the scan area, Pay/Transfer, Receive, Tap to turn on flash, Scan from gallery) akan dibesarkan dan di tengah secara horizontal.
+Kamera akan meliputi seluruh skrin (fullscreen).
+Bingkai segiempat di tengah untuk membantu pengguna meletakkan QR.
+Butang "Scan from gallery" di bawah bingkai.
+Semua komponen adalah overlay di atas kamera.
+3. Put Amount
+Tajuk "DuitNow QR" di tengah atas.
+"Amount" di tengah, di bawah tajuk.
+Label "Amount" di kiri, diikuti kotak input [MYR (input amount)].
+Kotak input "Recipient Reference (optional)" di bawahnya.
+Butang "Next" di bawah sekali, besar, merah, tulisan putih.
+Latar belakang putih, tiada paparan nama penerima.
+4. Approve
+Tajuk "Confirmation" di tengah atas.
+"Amount" di tengah, diikuti MYR (jumlah) di tengah.
+Garisan pemisah.
+"To" di kiri, nama penerima di kanan.
+"From" di kiri, "YOUTH SAVERS ACCT-i 76367992" di kanan.
+Kotak nota berwarna kelabu cerah dengan teks seperti yang anda nyatakan.
+Kotak "Total Amount" di bawah, "Total Amount" di kiri, "MYR (jumlah)" di kanan.
+Butang "Approve via SecureTAC" di bawah sekali, merah, tulisan putih.
+Latar belakang putih, tulisan hitam.
+5. Output
+"Successful" di tengah atas, hijau.
+"Transaction Summary" di bawahnya, hitam, di tengah.
+"MYR (jumlah)" di bawahnya, di tengah.
+Tarikh & masa (format seperti contoh anda) di bawahnya, di tengah.
+Garisan pemisah.
+"OCTO Reference No." di kiri, nombor di kanan (bermula 23, 9 digit).
+"To" di kiri, nama penerima di kanan.
+"From" di kiri, "YOUTH SAVERS ACCT-i 76367992" di kanan.
+Butang share bulat, light grey, icon putih.
+Butang "Done" di bawah sekali, merah, tulisan putih, kembali ke homepage bila ditekan.
