@@ -390,98 +390,103 @@ async function commitAndPush() {
 
   // Create backup branch with timestamp
   const backupBranch = `backup-${new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '').replace('T', '')}`;
-  log(`Creating backup branch: ${backupBranch}`, 'yellow');
 
   try {
-    execCommand(`git checkout -b ${backupBranch}`, { ignoreError: true });
-  } catch (error) {
-    log('Branch might already exist, continuing...', 'yellow');
-  }
-
-  // Commit changes
-  try {
-    execCommand(`git commit -m "${commitMessage}"`, { ignoreError: true });
-    log('✓ Changes committed', 'green');
-  } catch (error) {
-    log('No changes to commit', 'yellow');
-  }
-
-  // Push backup branch
-  log(`Pushing to ${backupBranch}...`, 'yellow');
-  try {
-    execCommand(`git push -u origin ${backupBranch} --force`);
-    log(`✓ Pushed to ${backupBranch}`, 'green');
-  } catch (error) {
-    log('⚠ Warning: Could not push to backup branch', 'red');
-  }
-
-  // Switch back to main and merge
-  log('Switching to main branch...', 'yellow');
-  execCommand('git checkout main', { ignoreError: true });
-
-  log('Merging backup into main...', 'yellow');
-  try {
-    execCommand(`git merge ${backupBranch} --no-ff -m "Merge ${backupBranch}"`);
-  } catch (error) {
-    log('⚠ Warning: Merge conflict or already merged', 'yellow');
-  }
-
-  // Push to main
-  log('Pushing to main...', 'yellow');
-  try {
-    execCommand('git push origin main --force');
-    log('✓ Pushed to main', 'green');
-  } catch (error) {
-    log('⚠ Warning: Could not push to main', 'red');
-  }
-
-  // Clean up local backup branch
-  log('Cleaning up local backup branch...', 'yellow');
-  try {
-    execCommand(`git branch -D ${backupBranch}`, { ignoreError: true });
-  } catch (error) {
-    // Ignore cleanup errors
-  }
-
-  // Clean up remote backup branch to avoid "Compare & pull request" prompts
-  log('Cleaning up remote backup branch...', 'yellow');
-  try {
-    execCommand(`git push origin --delete ${backupBranch}`, { silent: true });
-    log('✓ Remote backup branch deleted', 'green');
-  } catch (error) {
-    log('⚠ Warning: Could not delete remote backup branch - you may see "Compare & pull request" prompt', 'yellow');
-    log(`  To manually delete: git push origin --delete ${backupBranch}`, 'yellow');
-  }
-
-  // Also clean up any old backup branches from remote
-  log('Cleaning up old backup branches...', 'yellow');
-  try {
-    const remoteBranches = execCommand('git branch -r', { silent: true });
-    const backupBranches = remoteBranches.split('\n')
-      .filter(b => b.includes('origin/backup-'))
-      .map(b => b.trim().replace('origin/', ''));
-
-    if (backupBranches.length > 0) {
-      log(`Found ${backupBranches.length} old backup branches to clean up`, 'yellow');
-      backupBranches.forEach(branch => {
-        try {
-          execCommand(`git push origin --delete ${branch}`, { silent: true, ignoreError: true });
-          log(`  ✓ Deleted old branch: ${branch}`, 'green');
-        } catch (error) {
-          // Ignore errors for branches that might not exist
-        }
-      });
+    // Check if there are changes to commit
+    const status = execCommand('git status --porcelain', { silent: true });
+    if (!status || status.trim() === '') {
+      log('⚠ No changes to commit', 'yellow');
+      return;
     }
-  } catch (error) {
-    // Ignore cleanup errors
-  }
 
-  log('\n✨ Backup complete!', 'green');
-  log(`\n📌 Backup details:`, 'cyan');
-  log(`   Title: ${customTitle}`, 'white');
-  log(`   Branch: ${backupBranch}`, 'white');
-  log(`   Time: ${timestamp}`, 'white');
-  log('\n💡 Tip: No "Compare & pull request" prompt akan muncul kerana backup branches sudah di-delete', 'cyan');
+    // Ensure we're on main branch BEFORE committing
+    log('Ensuring we are on main branch...', 'yellow');
+    execCommand('git checkout main', { ignoreError: true });
+
+    // Commit changes on main branch FIRST (like nasi-project)
+    log(`Committing current state: "${customTitle}"...`, 'yellow');
+    try {
+      execCommand(`git commit -m "${commitMessage}"`);
+      log('✓ Changes committed on main branch', 'green');
+    } catch (error) {
+      log('⚠ Warning: Could not commit changes', 'red');
+      throw error;
+    }
+
+    // Create backup branch AFTER committing (for safety)
+    log(`Creating backup branch: ${backupBranch}`, 'yellow');
+    try {
+      execCommand(`git checkout -b ${backupBranch}`, { ignoreError: true });
+      execCommand(`git push origin ${backupBranch}`);
+      log(`✓ Backup branch created: ${backupBranch}`, 'green');
+    } catch (error) {
+      log('⚠ Warning: Could not create backup branch', 'yellow');
+    }
+
+    // Switch back to main
+    log('Switching back to main branch...', 'yellow');
+    execCommand('git checkout main');
+
+    // Push DIRECTLY to main (no merge needed since we committed on main)
+    log('Pushing to main branch...', 'yellow');
+    try {
+      execCommand('git push origin main');
+      log('✓ Successfully pushed to main branch', 'green');
+    } catch (error) {
+      if (error.message && error.message.includes('non-fast-forward')) {
+        log('⚠ Using force push to main...', 'yellow');
+        execCommand('git push origin main --force');
+        log('✓ Successfully force pushed to main branch', 'green');
+      } else {
+        throw error;
+      }
+    }
+
+    // Clean up local backup branch
+    log('Cleaning up local backup branch...', 'yellow');
+    try {
+      execCommand(`git branch -D ${backupBranch}`, { ignoreError: true });
+      log(`✓ Deleted local backup branch: ${backupBranch}`, 'green');
+    } catch (error) {
+      // Ignore cleanup errors
+    }
+
+    // Clean up remote backup branches to avoid "Compare & pull request" prompts
+    log('Cleaning up remote backup branches...', 'yellow');
+    try {
+      const remoteBranches = execCommand('git branch -r', { silent: true });
+      const backupBranches = remoteBranches.split('\n')
+        .filter(b => b.includes('origin/backup-'))
+        .map(b => b.trim().replace('origin/', ''));
+
+      if (backupBranches.length > 0) {
+        log(`Found ${backupBranches.length} backup branches to clean up`, 'yellow');
+        backupBranches.forEach(branch => {
+          try {
+            execCommand(`git push origin --delete ${branch}`, { silent: true, ignoreError: true });
+            log(`  ✓ Deleted remote branch: ${branch}`, 'green');
+          } catch (error) {
+            // Ignore errors for branches that might not exist
+          }
+        });
+      }
+    } catch (error) {
+      // Ignore cleanup errors
+    }
+
+    log('\n✨ Backup complete!', 'green');
+    log(`\n📌 Backup details:`, 'cyan');
+    log(`   Title: ${customTitle}`, 'white');
+    log(`   Branch: ${backupBranch}`, 'white');
+    log(`   Time: ${timestamp}`, 'white');
+    log('\n💡 Semua files sudah di-push terus ke main branch', 'cyan');
+    log('💡 Tiada "Compare & pull request" prompt kerana backup branches di-delete', 'cyan');
+
+  } catch (error) {
+    log('\n⚠ Warning: Commit/push encountered an error', 'red');
+    log(`   Error: ${error.message || error}`, 'red');
+    throw error;
+  }
 }
 
 async function main() {
