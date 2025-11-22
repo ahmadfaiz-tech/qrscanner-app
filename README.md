@@ -328,3 +328,4 @@ This project is for educational and portfolio purposes. Not licensed for commerc
 ---
 
 **Built with ❤️ using React Native and TypeScript**
+
