@@ -1,0 +1,4 @@
+C:\Projects\QRScannerApp\node_modules\react-native-permissions\android\build\generated\source\codegen\jni\CMakeLists.txt
+C:\Projects\QRScannerApp\node_modules\react-native-vector-icons\android\build\generated\source\codegen\jni\CMakeLists.txt
+C:\Projects\QRScannerApp\node_modules\react-native-worklets-core\android\build\generated\source\codegen\jni\CMakeLists.txt
+C:\Projects\QRScannerApp\node_modules\react-native\ReactAndroid\cmake-utils\default-app-setup\CMakeLists.txt
