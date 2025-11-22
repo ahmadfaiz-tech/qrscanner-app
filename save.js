@@ -443,6 +443,15 @@ async function commitAndPush() {
     // Ignore cleanup errors
   }
 
+  // Clean up remote backup branch to avoid "Compare & pull request" prompts
+  log('Cleaning up remote backup branch...', 'yellow');
+  try {
+    execCommand(`git push origin --delete ${backupBranch}`, { ignoreError: true });
+    log('✓ Remote backup branch deleted', 'green');
+  } catch (error) {
+    // Ignore cleanup errors - branch might not exist on remote
+  }
+
   log('\n✨ Backup complete!', 'green');
   log(`\n📌 Backup details:`, 'cyan');
   log(`   Title: ${customTitle}`, 'white');
