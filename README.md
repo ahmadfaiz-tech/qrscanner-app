@@ -1,129 +1,226 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# DuitNow QR Scanner App
 
-# Getting Started
+A React Native mobile application that simulates a CIMB Bank DuitNow payment flow with QR code scanning capabilities. This is a learning/portfolio project demonstrating modern mobile development practices and payment interface design.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+![React Native](https://img.shields.io/badge/React_Native-0.79.2-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0.4-3178C6?logo=typescript)
+![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android)
 
-## Step 1: Start Metro
+## About the Project
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+This app demonstrates a complete DuitNow QR payment flow, from scanning to transaction confirmation. It features real-time QR code detection, smart merchant name extraction using EMVCo TLV parsing, and a professional banking-inspired UI.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+**⚠️ Important Disclaimer:** This is a **frontend prototype only** for learning and demonstration purposes. No actual payments are processed, and there is no connection to any banking API or payment gateway.
 
-```sh
-# Using npm
-npm start
+## Features
 
-# OR using Yarn
-yarn start
+- **QR Code Scanning**
+  - Live camera scanning with custom overlay frame
+  - Scan from gallery images (JPEG support)
+  - Real-time QR code detection and validation
+  - Automatic merchant name extraction
+
+- **Smart Data Extraction**
+  - EMVCo TLV parser for DuitNow QR codes
+  - Extracts merchant name from tag 59 (Merchant Name field)
+  - Handles standard PayNet/DuitNow QR format
+
+- **Complete Payment Flow (5 Screens)**
+  1. **Homepage** - Simple landing page with "Scan QR" button
+  2. **Camera** - Full-screen camera view with Pay/Transfer toggle
+  3. **Put Amount** - Amount entry with automatic MYR formatting
+  4. **Approve** - Confirmation screen with transaction details
+  5. **Output** - Success screen with transaction receipt
+
+- **Currency Formatting**
+  - Automatic decimal placement (e.g., "100" → "1.00")
+  - Real-time input validation
+  - Professional MYR display format
+
+- **Transaction Logging**
+  - Saves to local device storage (`transactions.md`)
+  - Timestamp tracking
+  - 9-digit OCTO reference number generation
+
+- **UI/UX Features**
+  - Real-time clock display
+  - Linear gradient backgrounds
+  - Bank-inspired professional design
+  - Material Icons integration
+  - Custom Calibri font family
+
+## Tech Stack
+
+### Core Framework
+- **React Native** 0.79.2
+- **TypeScript** 5.0.4
+- **React** 19.0.0
+
+### Camera & QR Scanning
+- `react-native-vision-camera` (4.6.4) - Primary camera interface
+- `vision-camera-dynamsoft-barcode-reader` (2.2.1) - QR code detection engine
+- `react-native-image-picker` (8.2.1) - Gallery image selection
+- `jsqr` (1.4.0) - QR decoding from static images
+- `jpeg-js` (0.4.4) - JPEG image processing
+
+### UI Components
+- `react-native-vector-icons` (10.2.0) - Material Icons
+- `react-native-linear-gradient` (2.8.3) - Gradient backgrounds
+- `react-native-safe-area-context` (5.4.1) - Safe area handling
+
+### File System & Permissions
+- `react-native-fs` (2.20.0) - Local file operations
+- `react-native-permissions` (5.4.1) - Camera & gallery access
+
+### Other Dependencies
+- `react-native-reanimated` (3.18.0)
+- `react-native-gesture-handler` (2.25.0)
+- `react-native-worklets-core` (1.5.0)
+
+## Installation & Setup
+
+### Prerequisites
+
+- **Node.js** >= 18
+- **React Native development environment** ([Setup Guide](https://reactnative.dev/docs/set-up-your-environment))
+- **Android SDK** (for Android development)
+- **Android device or emulator**
+
+### Installation Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ahmadfaiz-tech/qrscanner-app.git
+   cd QrScannerApp
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Link custom fonts**
+   ```bash
+   npx react-native-asset
+   ```
+
+4. **Start Metro bundler**
+   ```bash
+   npm start
+   ```
+
+5. **Run on Android**
+
+   In a new terminal window:
+   ```bash
+   npm run android
+   ```
+
+   Or using the VS Code task (Ctrl+Shift+B):
+   - Select **🤖 Build Android**
+
+## Usage Guide
+
+### Scanning QR Codes
+
+1. **Launch the app** and tap the "Imbas QR" (Scan QR) button on the homepage
+2. **Grant camera permissions** when prompted
+3. **Point the camera** at a DuitNow QR code
+   - The app will automatically detect and extract the merchant name
+   - Alternatively, tap "Scan from gallery" to select a QR image
+
+### Making a Payment
+
+1. After scanning, enter the **payment amount** (e.g., type "1000" for MYR 10.00)
+2. Optionally add a **recipient reference**
+3. Tap **"Next"** to review transaction details
+4. Tap **"Approve via SecureTAC"** to simulate payment approval
+5. View the **transaction receipt** with reference number and timestamp
+
+### Transaction Records
+
+All transactions are saved locally to `transactions.md` in the format:
+```
+- Transaksi: [Merchant Name], MYR [Amount], [Timestamp]
 ```
 
-## Step 2: Build and run your app
+## Special Implementation: EMVCo TLV Parser
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+This app includes a custom parser for extracting merchant names from DuitNow QR codes, which follow the **EMVCo QR code standard** using **TLV (Tag-Length-Value)** format.
 
-### Android
+### How It Works
 
-```sh
-# Using npm
-npm run android
+The `extractFullName` function (App.tsx:61-76) parses the merchant name:
 
-# OR using Yarn
-yarn android
+```typescript
+const extractFullName = (qrData: string): string => {
+  // Match tag 59 (Merchant Name) and capture the 2-digit length
+  const nameField = qrData.match(/59(\d{2})/);
+
+  if (nameField) {
+    const length = parseInt(nameField[1], 10);  // Get the length value
+    const startIndex = nameField.index! + 4;     // Position after "59XX"
+    const merchantName = qrData.substring(startIndex, startIndex + length);
+    return merchantName;
+  }
+  return 'Nama tidak ditemui';  // Name not found
+};
 ```
 
-### iOS
+### TLV Format Explanation
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+- **Tag 59** = Merchant Name (EMVCo standard field)
+- **Length** = 2-digit number indicating how many characters follow
+- **Value** = The actual merchant name
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+**Example:**
+- QR Data: `...5924KAFETERIA D SELERA BONDA6002MY...`
+- Parsed: Tag `59`, Length `24`, Value `KAFETERIA D SELERA BONDA`
+- Result: "KAFETERIA D SELERA BONDA"
 
-```sh
-bundle install
+This ensures accurate extraction without capturing trailing data like country codes or other fields.
+
+## Project Structure
+
+```
+D:\Projects\QrScannerApp\
+├── android/              # Android native code & configuration
+├── ios/                  # iOS native code (not configured)
+├── assets/
+│   └── fonts/           # Calibri font family (Regular, Bold, Italic, Bold Italic)
+├── screenshots/         # App screenshots & documentation
+├── .vscode/
+│   └── tasks.json       # VS Code build/save/restore tasks
+├── App.tsx              # Main application code (~557 lines)
+├── package.json         # Dependencies & scripts
+├── babel.config.js      # Babel configuration
+├── tsconfig.json        # TypeScript configuration
+├── react-native.config.js # Asset linking configuration
+├── save.js              # GitHub backup script
+├── restore.js           # GitHub restore script
+├── centeng.png          # Success checkmark icon
+└── README.md            # This file
 ```
 
-Then, and every time you update your native dependencies, run:
+## Troubleshooting
 
-```sh
-bundle exec pod install
-```
+### Build Failures
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+If you encounter build errors, try cleaning the Android build:
 
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-
-
-stop dahulu metro sebelum run command ini:
-
+```bash
 cd android
 ./gradlew clean
 cd ..
 npx react-native run-android
+```
 
-jika masih gagal cuba run 
+### CMake/Native Build Issues
 
-npx react-native run-android
+For persistent native build issues, clean all build artifacts:
 
-selepas menjalankan step 1
-
-
-jika gagal pada build.gradle: guna langkah ini:
-
-Jika Masih Gagal:
-Pastikan tiada import modul yang sudah dipadam dalam kod anda (contoh: import QRLocalImage from 'react-native-qrcode-local-image'; mesti dipadam).
-Pastikan tiada kod yang guna modul yang sudah dipadam.
-Jika error berkaitan CMake/Native masih keluar, cuba padam folder berikut secara manual:
-android/app/build
-android/app/.cxx
-android/build
-node_modules/.cache
-
-ini prompt auto:
-
+**Windows PowerShell:**
+```powershell
 Remove-Item -Recurse -Force node_modules
 Remove-Item -Recurse -Force android\app\build
 Remove-Item -Recurse -Force android\build
@@ -131,56 +228,103 @@ Remove-Item -Recurse -Force android\app\.cxx
 Remove-Item -Recurse -Force android\app\.externalNativeBuild
 Remove-Item -Recurse -Force android\.gradle
 Remove-Item -Recurse -Force .gradle
-Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Android\Sdk\cmake\3.22.1"
-Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Android\Sdk\ndk\27.1.12297006"
 npm install
 cd android
 ./gradlew clean
-./gradlew assembleRelease
+```
 
+### Architecture-Specific Build Issues
 
+If encountering CMake/Ninja errors, limit build architectures by editing `android/gradle.properties`:
 
-Kemudian ulang langkah 2-6 di atas.
-
-jika asyuik masalah cmake dan ninja guna step ini:
-Edit android/gradle.properties:
+```properties
 reactNativeArchitectures=armeabi-v7a,arm64-v8a
+```
 
+### Permission Issues
 
-1. Homepage
-Butang "Imbas QR" akan berada di tengah-tengah skrin, lebih besar, berwarna merah dengan tulisan putih.
-Latar belakang putih.
-2. Camera
-Semua teks (Place QR in the scan area, Pay/Transfer, Receive, Tap to turn on flash, Scan from gallery) akan dibesarkan dan di tengah secara horizontal.
-Kamera akan meliputi seluruh skrin (fullscreen).
-Bingkai segiempat di tengah untuk membantu pengguna meletakkan QR.
-Butang "Scan from gallery" di bawah bingkai.
-Semua komponen adalah overlay di atas kamera.
-3. Put Amount
-Tajuk "DuitNow QR" di tengah atas.
-"Amount" di tengah, di bawah tajuk.
-Label "Amount" di kiri, diikuti kotak input [MYR (input amount)].
-Kotak input "Recipient Reference (optional)" di bawahnya.
-Butang "Next" di bawah sekali, besar, merah, tulisan putih.
-Latar belakang putih, tiada paparan nama penerima.
-4. Approve
-Tajuk "Confirmation" di tengah atas.
-"Amount" di tengah, diikuti MYR (jumlah) di tengah.
-Garisan pemisah.
-"To" di kiri, nama penerima di kanan.
-"From" di kiri, "YOUTH SAVERS ACCT-i 76367992" di kanan.
-Kotak nota berwarna kelabu cerah dengan teks seperti yang anda nyatakan.
-Kotak "Total Amount" di bawah, "Total Amount" di kiri, "MYR (jumlah)" di kanan.
-Butang "Approve via SecureTAC" di bawah sekali, merah, tulisan putih.
-Latar belakang putih, tulisan hitam.
-5. Output
-"Successful" di tengah atas, hijau.
-"Transaction Summary" di bawahnya, hitam, di tengah.
-"MYR (jumlah)" di bawahnya, di tengah.
-Tarikh & masa (format seperti contoh anda) di bawahnya, di tengah.
-Garisan pemisah.
-"OCTO Reference No." di kiri, nombor di kanan (bermula 23, 9 digit).
-"To" di kiri, nama penerima di kanan.
-"From" di kiri, "YOUTH SAVERS ACCT-i 76367992" di kanan.
-Butang share bulat, light grey, icon putih.
-Butang "Done" di bawah sekali, merah, tulisan putih, kembali ke homepage bila ditekan.
+Ensure the following permissions are granted:
+- **Camera** access (for QR scanning)
+- **Gallery/Storage** access (for image selection)
+  - Android 13+: `READ_MEDIA_IMAGES`
+  - Android 12 and below: `READ_EXTERNAL_STORAGE`
+
+### Metro Bundler Issues
+
+Stop Metro and restart:
+```bash
+# Stop Metro (Ctrl+C)
+npm start -- --reset-cache
+```
+
+## Important Notes & Limitations
+
+### This is NOT:
+- ❌ A production payment application
+- ❌ Connected to any banking API or payment gateway
+- ❌ Processing real money transfers
+- ❌ Secure for actual financial transactions
+- ❌ Available on iOS (Windows development only)
+
+### This IS:
+- ✅ A learning/portfolio project
+- ✅ A frontend prototype demonstrating React Native skills
+- ✅ Android-only application
+- ✅ Suitable for understanding QR scanning implementation
+- ✅ A demonstration of TypeScript + React Native capabilities
+- ✅ Educational reference for EMVCo TLV parsing
+
+### Simulated Features
+- **Account:** Hardcoded as "SAVERS ACCT-i 7636717112"
+- **Reference Numbers:** Generated starting with "2" (9 digits)
+- **Clock:** Real-time display, updates every second
+- **Transactions:** Saved locally only, not transmitted anywhere
+
+## Development Tools
+
+### VS Code Tasks
+
+Use **Ctrl+Shift+B** to access build tasks:
+- **🤖 Build Android** - Build and run on Android device/emulator
+- **💾 Save** - Backup project to GitHub with custom commit message
+- **🔄 Restore** - Restore project from GitHub backup branches
+
+### Scripts
+
+**Backup to GitHub:**
+```bash
+node save.js "Your commit message"
+```
+
+**Restore from backup:**
+```bash
+node restore.js
+```
+
+## Learn More
+
+### React Native Resources
+- [React Native Documentation](https://reactnative.dev/docs/getting-started)
+- [TypeScript for React Native](https://reactnative.dev/docs/typescript)
+
+### QR Code Standards
+- [EMVCo QR Code Specification](https://www.emvco.com/emv-technologies/qrcodes/)
+- [PayNet DuitNow](https://www.paynet.my/duitnow/)
+
+### Vision Camera
+- [React Native Vision Camera Docs](https://react-native-vision-camera.com/)
+- [Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/sdk-mobile/)
+
+## License
+
+This project is for educational and portfolio purposes. Not licensed for commercial use.
+
+## Author
+
+**Ahmad Faiz**
+- GitHub: [@ahmadfaiz-tech](https://github.com/ahmadfaiz-tech)
+- Repository: [qrscanner-app](https://github.com/ahmadfaiz-tech/qrscanner-app)
+
+---
+
+**Built with ❤️ using React Native and TypeScript**
