@@ -446,10 +446,34 @@ async function commitAndPush() {
   // Clean up remote backup branch to avoid "Compare & pull request" prompts
   log('Cleaning up remote backup branch...', 'yellow');
   try {
-    execCommand(`git push origin --delete ${backupBranch}`, { ignoreError: true });
+    execCommand(`git push origin --delete ${backupBranch}`, { silent: true });
     log('✓ Remote backup branch deleted', 'green');
   } catch (error) {
-    // Ignore cleanup errors - branch might not exist on remote
+    log('⚠ Warning: Could not delete remote backup branch - you may see "Compare & pull request" prompt', 'yellow');
+    log(`  To manually delete: git push origin --delete ${backupBranch}`, 'yellow');
+  }
+
+  // Also clean up any old backup branches from remote
+  log('Cleaning up old backup branches...', 'yellow');
+  try {
+    const remoteBranches = execCommand('git branch -r', { silent: true });
+    const backupBranches = remoteBranches.split('\n')
+      .filter(b => b.includes('origin/backup-'))
+      .map(b => b.trim().replace('origin/', ''));
+
+    if (backupBranches.length > 0) {
+      log(`Found ${backupBranches.length} old backup branches to clean up`, 'yellow');
+      backupBranches.forEach(branch => {
+        try {
+          execCommand(`git push origin --delete ${branch}`, { silent: true, ignoreError: true });
+          log(`  ✓ Deleted old branch: ${branch}`, 'green');
+        } catch (error) {
+          // Ignore errors for branches that might not exist
+        }
+      });
+    }
+  } catch (error) {
+    // Ignore cleanup errors
   }
 
   log('\n✨ Backup complete!', 'green');
@@ -457,6 +481,7 @@ async function commitAndPush() {
   log(`   Title: ${customTitle}`, 'white');
   log(`   Branch: ${backupBranch}`, 'white');
   log(`   Time: ${timestamp}`, 'white');
+  log('\n💡 Tip: No "Compare & pull request" prompt akan muncul kerana backup branches sudah di-delete', 'cyan');
 }
 
 async function main() {
