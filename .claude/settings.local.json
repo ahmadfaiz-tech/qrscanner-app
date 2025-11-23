@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(git config:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git show-ref:*)"
     ],
     "deny": [],
     "ask": []
