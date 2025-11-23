@@ -433,7 +433,7 @@ const App = () => {
         >
           <View style={{ alignItems: 'center' }}>
             <Image
-              source={require('./centeng.png')}
+              source={require('./screenshots/centeng.png')}
               style={{ width: 120, height: 120, marginBottom: 8 }}
               resizeMode="contain"
             />

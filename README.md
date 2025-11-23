@@ -198,7 +198,7 @@ D:\Projects\QrScannerApp\
 ├── react-native.config.js # Asset linking configuration
 ├── save.js              # GitHub backup script
 ├── restore.js           # GitHub restore script
-├── centeng.png          # Success checkmark icon
+├── screenshots/centeng.png    # Success checkmark icon
 └── README.md            # This file
 ```
 
